@@ -8,6 +8,7 @@ app.use(express.static('public'));
 // app.set('views', './views'); // views = ./views
 app.set('view engine', 'ejs');
 
+app.use(chatCat.sessions);
 app.use('/', chatCat.router);
 
 app.listen(app.get('port'), () => {
