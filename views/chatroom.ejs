@@ -14,6 +14,8 @@
 			let user = '<%= user.fullName %>';
 			let userPic = '<%= user.profilePic %>';
 			let chatUsers = $('.chatUsers');
+			let chatInput = $("input[name='userInput']");
+			let chatMessagesDiv = $('.chatMessages');
 
 			socket.on('connect', () => {
 				console.log("fine");
@@ -39,6 +41,40 @@
 				}
 				chatUsers.html('').html(usersListData);
 			});
+
+			let updateFeed = (userPic, message) => {
+				console.log("hahah");
+				let template = `<div class="chatBlock">
+													<div class="userPic"><img src="${userPic}"></div>
+													<div class="chatMsg">${message}</div>
+												</div>`;
+				console.log(template);
+				// don't know slideDown() doesn't work
+				$(template).prependTo(chatMessagesDiv).show();
+			}
+
+			chatInput.on('keyup', function(evt) {
+				evt.preventDefault();
+				let messageFld = $(this);
+				if (evt.which === 13 && messageFld.val() !== '') {
+					console.log("in newMessage");
+					socket.emit('newMessage', {
+						roomID,
+						user,
+						userPic,
+						message: messageFld.val()
+					});
+					// Update the local feed
+					updateFeed(userPic, messageFld.val());
+					messageFld.val('');
+				}
+			});
+
+			socket.on('inMessage', data => {
+				let parsedData = JSON.parse(data);
+				updateFeed(parsedData.userPic, parsedData.message);
+			});
+
 		});
 	</script>
 </head>
@@ -57,10 +93,7 @@
 			<div class="chatMessagesPanel">
 				<div class="chatMessages">
 				<!-- Loop this for chat messages -->
-				<div class="chatBlock">
-					<div class="userPic"><img src="/img/user.jpg"></div>
-					<div class="chatMsg">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Deleniti perferendis eius aut nesciunt necessitatibus ad nulla, qui sequi, id nam. Possimus odit aut nisi veritatis amet distinctio id officiis ipsam!</div>
-				</div>
+
 				<!-- loop end -->
 				</div>
 				<div class="typePanel">
