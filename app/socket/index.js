@@ -27,4 +27,24 @@ module.exports = (io, app) => {
       }
     });
   });
+
+  io.of('/chatter').on('connection', socket => {
+    // Join a chatroom
+    console.log("fine");
+
+    socket.on('join', data => {
+      let usersList = h.addUserToRoom(allrooms, data, socket);
+
+      // Update the list of active users as shown on the chatroom page
+      socket.broadcast.to(data.roomID).emit('updateUsersList', JSON.stringify(usersList.users));
+      socket.emit('updateUsersList', JSON.stringify(usersList.users));
+    });
+
+    // When a socket exits
+    socket.on('disconnect', () => {
+      // Find the room, to which the socket is connect to and purge the user
+      let room = h.removeUserFromRoom(allrooms, socket);
+      socket.broadcast.to(room.roomID).emit('updateUsersList', JSON.stringify(room.users));
+    });
+  });
 }
