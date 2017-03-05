@@ -35,7 +35,7 @@ module.exports = () => {
               .catch(error => logger.log('error', 'error when creating new user: ' + error))
         }
       });
-}
+    }
 
   passport.use(new FacebookStrategy(config.fb, authProcessor));
   passport.use(new TwitterStrategy(config.twitter, authProcessor));

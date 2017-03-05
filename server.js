@@ -9,9 +9,14 @@ app.use(express.static('public'));
 // app.set('views', './views'); // views = ./views
 app.set('view engine', 'ejs');
 
+// set sessions
 app.use(chatCat.sessions);
+
+// use passport for auth
 app.use(passport.initialize());
 app.use(passport.session());
+
+// Use for logging HTTP request
 app.use(require('morgan')('combined', {
   stream: {
     write: message => {
@@ -21,8 +26,9 @@ app.use(require('morgan')('combined', {
   }
 }));
 
+// mount point
 app.use('/', chatCat.router);
 
 chatCat.ioServer(app).listen(app.get('port'), () => {
-  console.log('CHATCAT is running on Port: ', app.get('port'));
+  console.log('CHATCAT is running on Port:', app.get('port'));
 });

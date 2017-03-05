@@ -9,6 +9,7 @@ module.exports = () => {
       '/': (req, res, next) => {
         res.render('login');
       },
+
       '/rooms': [h.isAuthenticated, (req, res, next) => {
         res.render('rooms', {
             user: req.user,
@@ -30,6 +31,7 @@ module.exports = () => {
           });
         }
       }],
+
       '/getsession': (req, res, next) => {
         res.send("My favourite color: " + req.session.favColor);
       },
@@ -37,6 +39,7 @@ module.exports = () => {
         req.session.favColor = "Red",
         res.send("Session Set");
       },
+
       '/auth/facebook': passport.authenticate('facebook'),
       '/auth/facebook/callback': passport.authenticate('facebook', {
         successRedirect: '/rooms',
@@ -47,14 +50,16 @@ module.exports = () => {
         successRedirect: '/rooms',
         failureRedirect: '/'
       }),
+
       '/logout': (req, res, next) => {
         req.logout();
         res.redirect('/');
       }
     },
-    'post': {
 
+    'post': {
     },
+    
     'NA': (req, res, next) => {
       res.status(404).sendFile(process.cwd() + '/views/404.htm');
     }
